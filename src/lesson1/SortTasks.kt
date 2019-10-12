@@ -147,7 +147,29 @@ fun sortSequence(inputName: String, outputName: String) {
  *
  * Результат: second = [1 3 4 9 9 13 15 20 23 28]
  */
+
+// Траты времени: O(n+m), где n - длина первого массива, m - длина второго массива
+// Траты памяти: O(1)
 fun <T : Comparable<T>> mergeArrays(first: Array<T>, second: Array<T?>) {
-    TODO()
+    var i = 0
+    var j = first.size
+    var k = 0
+    while ((i < first.size) && (j < second.size)) {
+        if (first[i] > second[j]!!) {
+            second[k] = second[j]
+            j++
+            k++
+        } else {
+            second[k] = first[i]
+            i++
+            k++
+        }
+    }
+    if (i < first.size) {
+        for (element in i until first.size) {
+            second[k] = first[element]
+            k++
+        }
+    }
 }
 
