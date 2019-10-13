@@ -2,6 +2,10 @@
 
 package lesson1
 
+import java.io.File
+import java.lang.IllegalArgumentException
+import java.util.*
+
 /**
  * Сортировка времён
  *
@@ -32,8 +36,56 @@ package lesson1
  *
  * В случае обнаружения неверного формата файла бросить любое исключение.
  */
+
+// O(n log n) - траты времени
+// O(1) - траты памяти
 fun sortTimes(inputName: String, outputName: String) {
-    TODO()
+
+    val writer = File(outputName).bufferedWriter()
+    val input = File(inputName).readLines()
+
+    if (!input.all { it.matches(Regex("""^(0[1-9]|1[0-2]):([0-5]\d):([0-5]\d) [AP]M$""")) })
+        throw IllegalArgumentException("There is no time!")
+
+    Collections.sort(input) { x, y ->
+        compareTimes(x, y)
+    }
+
+    for (i in input) {
+        writer.write(i)
+        writer.newLine()
+    }
+
+    writer.close()
+}
+
+fun compareTimes(first: String, second: String): Int {
+
+    if ((first[9] == 'P') && (second[9] == 'A'))
+        return 1
+    if ((first[9] == 'A') && (second[9] == 'P'))
+        return -1
+
+    val firstHours = first.substring(0, 2).toInt() % 12
+    val secondHours = second.substring(0, 2).toInt() % 12
+    val firstMinutes = first.substring(3, 5).toInt()
+    val secondMinutes = second.substring(3, 5).toInt()
+    val firstSeconds = first.substring(6, 8).toInt()
+    val secondSeconds = second.substring(6, 8).toInt()
+
+    if (firstHours > secondHours)
+        return 1
+    if (firstHours < secondHours)
+        return -1
+    if (firstMinutes > secondMinutes)
+        return 1
+    if (firstMinutes < secondMinutes)
+        return -1
+    if (firstSeconds > secondSeconds)
+        return 1
+    if (firstSeconds < secondSeconds)
+        return -1
+    return 0
 }
 
 /**
@@ -151,9 +203,11 @@ fun sortSequence(inputName: String, outputName: String) {
 // Траты времени: O(n+m), где n - длина первого массива, m - длина второго массива
 // Траты памяти: O(1)
 fun <T : Comparable<T>> mergeArrays(first: Array<T>, second: Array<T?>) {
+
     var i = 0
     var j = first.size
     var k = 0
+
     while ((i < first.size) && (j < second.size)) {
         if (first[i] > second[j]!!) {
             second[k] = second[j]
@@ -165,6 +219,7 @@ fun <T : Comparable<T>> mergeArrays(first: Array<T>, second: Array<T?>) {
             k++
         }
     }
+
     if (i < first.size) {
         for (element in i until first.size) {
             second[k] = first[element]
