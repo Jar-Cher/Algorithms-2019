@@ -2,6 +2,9 @@
 
 package lesson2
 
+import kotlin.math.floor
+import kotlin.math.sqrt
+
 /**
  * Получение наибольшей прибыли (она же -- поиск максимального подмассива)
  * Простая
@@ -94,8 +97,30 @@ fun josephTask(menNumber: Int, choiceInterval: Int): Int {
  * Если имеется несколько самых длинных общих подстрок одной длины,
  * вернуть ту из них, которая встречается раньше в строке first.
  */
+
+// O(n*m) - траты времени; где n, m - размеры строк first and second соответственно
+// O(n*m) - траты памяти
 fun longestCommonSubstring(first: String, second: String): String {
-    TODO()
+
+    val matches = Array(first.length) { Array(second.length) { 0 } }
+    var maxLength = 0
+    var maxCommonSubstring = ""
+
+    for (i in 0 until first.length)
+        for (j in 0 until second.length) {
+
+            matches[i][j] = if (first[i] == second[j])
+                matches.getOrElse(i - 1) { emptyArray() }.getOrElse(j - 1) { 0 } + 1
+            else
+                0
+
+            if (matches[i][j] > maxLength) {
+                maxLength = matches[i][j]
+                maxCommonSubstring = first.substring(i - maxLength + 1, i + 1)
+            }
+        }
+
+    return maxCommonSubstring
 }
 
 /**
@@ -108,8 +133,21 @@ fun longestCommonSubstring(first: String, second: String): String {
  * Справка: простым считается число, которое делится нацело только на 1 и на себя.
  * Единица простым числом не считается.
  */
+
+// O(sqrt(1)+sqrt(2)+...+sqrt(limit)) - затраты времени
+// O(1) - затраты памяти
 fun calcPrimesNumber(limit: Int): Int {
-    TODO()
+
+    if (limit <= 1)
+        return 0
+
+    return (1..limit)
+        .fold(0) { prevResult, element ->
+            if (element >= 2 && (2..floor(sqrt(element.toDouble())).toInt()).all { element % it != 0 })
+                prevResult + 1
+            else
+                prevResult
+        }
 }
 
 /**
