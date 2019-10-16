@@ -41,22 +41,22 @@ import java.util.*
 // O(1) - траты памяти
 fun sortTimes(inputName: String, outputName: String) {
 
-    val writer = File(outputName).bufferedWriter()
     val input = File(inputName).readLines()
 
-    if (!input.all { it.matches(Regex("""^(0[1-9]|1[0-2]):([0-5]\d):([0-5]\d) [AP]M$""")) })
-        throw IllegalArgumentException("There is no time!")
+    File(outputName).bufferedWriter().use {
+        require(input.all { time -> time.matches(Regex("""^(0[1-9]|1[0-2]):([0-5]\d):([0-5]\d) [AP]M$""")) }) { "There is no time!" }
 
-    Collections.sort(input) { x, y ->
-        compareTimes(x, y)
+        Collections.sort(input) { x, y ->
+            compareTimes(x, y)
+        }
+
+        for (i in input) {
+            it.write(i)
+            it.newLine()
+        }
+
+        it.close()
     }
-
-    for (i in input) {
-        writer.write(i)
-        writer.newLine()
-    }
-
-    writer.close()
 }
 
 fun compareTimes(first: String, second: String): Int {

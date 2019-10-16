@@ -2,6 +2,7 @@
 
 package lesson2
 
+import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.sqrt
 
@@ -134,20 +135,23 @@ fun longestCommonSubstring(first: String, second: String): String {
  * Единица простым числом не считается.
  */
 
-// O(sqrt(1)+sqrt(2)+...+sqrt(limit)) - затраты времени
-// O(1) - затраты памяти
+// O(limit^2) - затраты времени
+// O(limit) - затраты памяти
 fun calcPrimesNumber(limit: Int): Int {
 
     if (limit <= 1)
         return 0
 
-    return (1..limit)
-        .fold(0) { prevResult, element ->
-            if (element >= 2 && (2..floor(sqrt(element.toDouble())).toInt()).all { element % it != 0 })
-                prevResult + 1
-            else
-                prevResult
-        }
+    val primeNumbers = arrayListOf<Int>()
+
+    for (element in 2..limit) {
+
+        val testNumbers = ceil(sqrt(element.toDouble())).toInt()
+        if (primeNumbers.filter { it <= testNumbers }.all { element % it != 0 })
+            primeNumbers.add(element)
+    }
+
+    return primeNumbers.size
 }
 
 /**
