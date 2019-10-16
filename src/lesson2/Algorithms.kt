@@ -142,13 +142,24 @@ fun calcPrimesNumber(limit: Int): Int {
     if (limit <= 1)
         return 0
 
-    val primeNumbers = arrayListOf<Int>()
+    val primeNumbers = mutableSetOf<Int>()
 
     for (element in 2..limit) {
 
-        val testNumbers = ceil(sqrt(element.toDouble())).toInt()
-        if (primeNumbers.filter { it <= testNumbers }.all { element % it != 0 })
-            primeNumbers.add(element)
+        val testNumbersCeil = ceil(sqrt(element.toDouble())).toInt()
+        val testNumbers = primeNumbers.filter { it <= testNumbersCeil }
+        var isComplex = false
+
+        for (i in testNumbers)
+            if (element % i == 0) {
+                isComplex = true
+                continue
+            }
+
+        if (isComplex)
+            continue
+
+        primeNumbers.add(element)
     }
 
     return primeNumbers.size
