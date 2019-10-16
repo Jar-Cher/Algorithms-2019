@@ -135,34 +135,17 @@ fun longestCommonSubstring(first: String, second: String): String {
  * Единица простым числом не считается.
  */
 
-// O(limit^2) - затраты времени
-// O(limit) - затраты памяти
+// O(sqrt(1)+sqrt(2)+...+sqrt(limit)) - затраты времени
+// O(1) - затраты памяти
 fun calcPrimesNumber(limit: Int): Int {
 
     if (limit <= 1)
         return 0
 
-    val primeNumbers = mutableSetOf<Int>()
-
-    for (element in 2..limit) {
-
-        val testNumbersCeil = ceil(sqrt(element.toDouble())).toInt()
-        val testNumbers = primeNumbers.filter { it <= testNumbersCeil }
-        var isComplex = false
-
-        for (i in testNumbers)
-            if (element % i == 0) {
-                isComplex = true
-                continue
-            }
-
-        if (isComplex)
-            continue
-
-        primeNumbers.add(element)
-    }
-
-    return primeNumbers.size
+    return (2..limit)
+        .count { element ->
+            (element >= 2 && (2..floor(sqrt(element.toDouble())).toInt()).all { element % it != 0 })
+        }
 }
 
 /**
