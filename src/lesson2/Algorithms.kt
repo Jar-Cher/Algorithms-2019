@@ -135,7 +135,7 @@ fun longestCommonSubstring(first: String, second: String): String {
  * Единица простым числом не считается.
  */
 
-// O(limit^2) - затраты времени
+// O(n * log (log n)) - затраты времени
 // O(limit) - затраты памяти
 fun calcPrimesNumber(limit: Int): Int {
 
