@@ -135,8 +135,8 @@ fun longestCommonSubstring(first: String, second: String): String {
  * Единица простым числом не считается.
  */
 
-// O(sqrt(1)+sqrt(2)+...+sqrt(limit)) - затраты времени
-// O(1) - затраты памяти
+// O(limit^2) - затраты времени
+// O(limit) - затраты памяти
 fun calcPrimesNumber(limit: Int): Int {
 
     if (limit <= 1)
