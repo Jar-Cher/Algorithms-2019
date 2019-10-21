@@ -107,8 +107,8 @@ fun longestCommonSubstring(first: String, second: String): String {
     var maxLength = 0
     var maxCommonSubstring = ""
 
-    for (i in 0 until first.length)
-        for (j in 0 until second.length) {
+    for (i in first.indices)
+        for (j in second.indices) {
 
             matches[i][j] = if (first[i] == second[j])
                 matches.getOrElse(i - 1) { emptyArray() }.getOrElse(j - 1) { 0 } + 1
@@ -142,10 +142,20 @@ fun calcPrimesNumber(limit: Int): Int {
     if (limit <= 1)
         return 0
 
-    return (2..limit)
-        .count { element ->
-            (element >= 2 && (2..floor(sqrt(element.toDouble())).toInt()).all { element % it != 0 })
+    val isChecked = BooleanArray(limit - 1)
+    var amountOfPrimes = 0
+
+    for (i in isChecked.indices) {
+
+        if (!isChecked[i]) {
+            amountOfPrimes++
+
+            for (j in i until limit - 1 step i + 2)
+                isChecked[j] = true
         }
+    }
+
+    return amountOfPrimes
 }
 
 /**

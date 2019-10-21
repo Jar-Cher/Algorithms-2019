@@ -8,6 +8,7 @@ import java.io.File
 import java.util.*
 import kotlin.math.abs
 import kotlin.system.measureNanoTime
+import kotlin.test.assertFails
 
 abstract class AbstractTaskTests : AbstractFileTests() {
 
@@ -42,6 +43,27 @@ abstract class AbstractTaskTests : AbstractFileTests() {
         try {
             sortTimes("input/time_in3.txt", "temp.txt")
             assertFileContent("temp.txt", File("input/time_out3.txt").readLines())
+        } finally {
+            File("temp.txt").delete()
+        }
+        try {
+            assertFails { sortTimes("input/addr_in1.txt", "temp.txt") }
+        } finally {
+            File("temp.txt").delete()
+        }
+        try {
+            sortTimes("input/time_in4.txt", "temp.txt")
+            assertFileContent(
+                "temp.txt",
+                """
+                     12:40:31 AM
+                     01:15:19 AM
+                     07:26:57 AM
+                     07:56:14 AM
+                     10:00:03 AM
+                     01:15:19 PM
+                """.trimIndent()
+            )
         } finally {
             File("temp.txt").delete()
         }
