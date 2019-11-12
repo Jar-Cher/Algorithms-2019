@@ -63,7 +63,73 @@ class KtBinaryTree<T : Comparable<T>> : AbstractMutableSet<T>(), CheckableSorted
      * Средняя
      */
     override fun remove(element: T): Boolean {
-        TODO()
+        val closest = find(element)
+        val comparison = if (closest == null)
+            return false
+        else
+            element.compareTo(closest.value)
+
+        if (comparison != 0)
+            return false
+
+        val parent = findParent(element)
+        when {
+
+            (closest.left == null) and (closest.right == null) -> {
+                when {
+                    parent == null -> root = null
+                    parent.left == closest -> parent.left = null
+                    parent.right == closest -> parent.right = null
+                }
+            }
+
+            (closest.left == null) and (closest.right != null) -> {
+                when {
+                    parent == null -> root = closest.right
+                    parent.left == closest -> parent.left = closest.right
+                    parent.right == closest -> parent.right = closest.right
+                }
+            }
+
+            (closest.left != null) and (closest.right == null) -> {
+                when {
+                    parent == null -> root = closest.left
+                    parent.left == closest -> parent.left = closest.left
+                    parent.right == closest -> parent.right = closest.left
+                }
+            }
+
+            (closest.left != null) and (closest.right != null) -> {
+                var replacementNode = closest.right
+                var replacementRightChildToMove = false
+
+                while (replacementNode?.left != null) {
+                    replacementNode = replacementNode.left
+                    if (replacementNode?.right != null)
+                        replacementRightChildToMove = true
+                }
+
+                val replacementNodeParent = findParent(replacementNode!!.value)
+
+                when {
+                    parent == null -> root = replacementNode
+                    parent.left == closest -> parent.left = replacementNode
+                    parent.right == closest -> parent.right = replacementNode
+                }
+
+                replacementNode.left = closest.left
+                if (replacementNode != closest.right) {
+                    if (replacementRightChildToMove)
+                        replacementNodeParent?.left = replacementNode.right
+                    else
+                        replacementNodeParent?.left = null
+                    replacementNode.right = closest.right
+                }
+            }
+
+        }
+        size--
+        return true
     }
 
     override operator fun contains(element: T): Boolean {
@@ -83,23 +149,45 @@ class KtBinaryTree<T : Comparable<T>> : AbstractMutableSet<T>(), CheckableSorted
         }
     }
 
+    private fun findParent(value: T): Node<T>? =
+        root?.let { findParent(it, null, value) }
+
+    private fun findParent(start: Node<T>, parent: Node<T>?, value: T): Node<T>? {
+        val comparison = value.compareTo(start.value)
+        return when {
+            comparison == 0 -> parent
+            comparison < 0 -> start.left?.let { findParent(it, start, value) } ?: parent
+            else -> start.right?.let { findParent(it, start, value) } ?: parent
+        }
+    }
+
     inner class BinaryTreeIterator internal constructor() : MutableIterator<T> {
+
+        private val nodes = toList(root)
+
+        private var index = -1
+
+        private fun toList(node: Node<T>?): List<Node<T>> {
+            return if (node != null) {
+                toList(node.left) + node + toList(node.right)
+            } else emptyList()
+        }
+
         /**
          * Проверка наличия следующего элемента
          * Средняя
          */
-        override fun hasNext(): Boolean {
-            // TODO
-            throw NotImplementedError()
-        }
+        override fun hasNext(): Boolean = (index < (nodes.size - 1))
 
         /**
          * Поиск следующего элемента
          * Средняя
          */
         override fun next(): T {
-            // TODO
-            throw NotImplementedError()
+            if (!hasNext())
+                throw IndexOutOfBoundsException("")
+            index++
+            return nodes[index].value
         }
 
         /**
