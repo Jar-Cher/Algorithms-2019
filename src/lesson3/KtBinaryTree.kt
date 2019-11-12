@@ -62,8 +62,23 @@ class KtBinaryTree<T : Comparable<T>> : AbstractMutableSet<T>(), CheckableSorted
      * Удаление элемента в дереве
      * Средняя
      */
-    private fun remove(closest: Node<T>): Boolean {
 
+    // O(n) - траты времени, где n - высота дерева
+    // O(1) - траты памяти
+    override fun remove(element: T): Boolean {
+        val closest = find(element)
+        val comparison = if (closest == null)
+            return false
+        else
+            element.compareTo(closest.value)
+
+        if (comparison != 0)
+            return false
+
+        return remove(closest)
+    }
+
+    private fun remove(closest: Node<T>): Boolean {
         val parent = findParent(closest)
         when {
 
@@ -124,19 +139,6 @@ class KtBinaryTree<T : Comparable<T>> : AbstractMutableSet<T>(), CheckableSorted
         return true
     }
 
-    override fun remove(element: T): Boolean {
-        val closest = find(element)
-        val comparison = if (closest == null)
-            return false
-        else
-            element.compareTo(closest.value)
-
-        if (comparison != 0)
-            return false
-
-        return remove(closest)
-    }
-
     override operator fun contains(element: T): Boolean {
         val closest = find(element)
         return closest != null && element.compareTo(closest.value) == 0
@@ -185,12 +187,18 @@ class KtBinaryTree<T : Comparable<T>> : AbstractMutableSet<T>(), CheckableSorted
          * Проверка наличия следующего элемента
          * Средняя
          */
+
+        // O(1) - траты времени
+        // O(1) - траты памяти
         override fun hasNext(): Boolean = (index < (nodes.size - 1))
 
         /**
          * Поиск следующего элемента
          * Средняя
          */
+
+        // O(1) - траты времени
+        // O(1) - траты памяти
         override fun next(): T {
             if (!hasNext())
                 throw IndexOutOfBoundsException("")
