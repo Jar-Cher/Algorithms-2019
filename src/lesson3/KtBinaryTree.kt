@@ -62,17 +62,9 @@ class KtBinaryTree<T : Comparable<T>> : AbstractMutableSet<T>(), CheckableSorted
      * Удаление элемента в дереве
      * Средняя
      */
-    override fun remove(element: T): Boolean {
-        val closest = find(element)
-        val comparison = if (closest == null)
-            return false
-        else
-            element.compareTo(closest.value)
+    private fun remove(closest: Node<T>): Boolean {
 
-        if (comparison != 0)
-            return false
-
-        val parent = findParent(element)
+        val parent = findParent(closest)
         when {
 
             (closest.left == null) and (closest.right == null) -> {
@@ -132,6 +124,19 @@ class KtBinaryTree<T : Comparable<T>> : AbstractMutableSet<T>(), CheckableSorted
         return true
     }
 
+    override fun remove(element: T): Boolean {
+        val closest = find(element)
+        val comparison = if (closest == null)
+            return false
+        else
+            element.compareTo(closest.value)
+
+        if (comparison != 0)
+            return false
+
+        return remove(closest)
+    }
+
     override operator fun contains(element: T): Boolean {
         val closest = find(element)
         return closest != null && element.compareTo(closest.value) == 0
@@ -152,6 +157,9 @@ class KtBinaryTree<T : Comparable<T>> : AbstractMutableSet<T>(), CheckableSorted
     private fun findParent(value: T): Node<T>? =
         root?.let { findParent(it, null, value) }
 
+    private fun findParent(node: Node<T>): Node<T>? =
+        root?.let { findParent(it, null, node.value) }
+
     private fun findParent(start: Node<T>, parent: Node<T>?, value: T): Node<T>? {
         val comparison = value.compareTo(start.value)
         return when {
@@ -163,7 +171,7 @@ class KtBinaryTree<T : Comparable<T>> : AbstractMutableSet<T>(), CheckableSorted
 
     inner class BinaryTreeIterator internal constructor() : MutableIterator<T> {
 
-        private val nodes = toList(root)
+        private var nodes = toList(root)
 
         private var index = -1
 
