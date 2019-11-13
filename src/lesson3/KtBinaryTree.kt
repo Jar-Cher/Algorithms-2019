@@ -173,15 +173,9 @@ class KtBinaryTree<T : Comparable<T>> : AbstractMutableSet<T>(), CheckableSorted
 
     inner class BinaryTreeIterator internal constructor() : MutableIterator<T> {
 
-        private var nodes = toList(root)
+        private val visited = mutableSetOf<Node<T>>()
 
-        private var index = -1
-
-        private fun toList(node: Node<T>?): List<Node<T>> {
-            return if (node != null) {
-                toList(node.left) + node + toList(node.right)
-            } else emptyList()
-        }
+        private var currentNode = root
 
         /**
          * Проверка наличия следующего элемента
@@ -189,8 +183,15 @@ class KtBinaryTree<T : Comparable<T>> : AbstractMutableSet<T>(), CheckableSorted
          */
 
         // O(1) - траты времени
-        // O(1) - траты памяти
-        override fun hasNext(): Boolean = (index < (nodes.size - 1))
+        // O(n) - траты памяти
+        override fun hasNext(): Boolean {
+            if (root == null)
+                return false
+            var node = root
+            while (node?.right != null)
+                node = node.right
+            return node != currentNode
+        }
 
         /**
          * Поиск следующего элемента
@@ -200,10 +201,29 @@ class KtBinaryTree<T : Comparable<T>> : AbstractMutableSet<T>(), CheckableSorted
         // O(1) - траты времени
         // O(1) - траты памяти
         override fun next(): T {
-            if (!hasNext())
-                throw IndexOutOfBoundsException("")
-            index++
-            return nodes[index].value
+
+            when {
+                (currentNode?.left !in visited) and (currentNode?.left != null) -> {
+                    while (currentNode?.left != null) {
+                        currentNode = currentNode!!.left
+                    }
+                }
+                currentNode !in visited -> {
+
+                }
+                (currentNode?.right !in visited) and (currentNode?.right != null) -> {
+                    currentNode = currentNode!!.right
+                    while (currentNode?.left != null) {
+                        currentNode = currentNode!!.left
+                    }
+                }
+                else -> {
+                    while (currentNode in visited)
+                        currentNode = findParent(currentNode!!)
+                }
+            }
+            currentNode?.let { visited.add(it) }
+            return currentNode!!.value
         }
 
         /**
@@ -211,8 +231,8 @@ class KtBinaryTree<T : Comparable<T>> : AbstractMutableSet<T>(), CheckableSorted
          * Сложная
          */
         override fun remove() {
-            // TODO
-            throw NotImplementedError()
+            remove(find(currentNode!!.value)!!)
+            currentNode = find(next())
         }
     }
 
