@@ -257,6 +257,8 @@ class KtBinaryTree<T : Comparable<T>> : AbstractMutableSet<T>(), CheckableSorted
          * Удаление следующего элемента
          * Сложная
          */
+        // O(n) - траты времени, где n - высота дерева
+        // O(1) - траты памяти
         override fun remove() {
             wasDeleted = true
             val replacement = nextNode(currentNode, visitedNodes)
@@ -273,6 +275,8 @@ class KtBinaryTree<T : Comparable<T>> : AbstractMutableSet<T>(), CheckableSorted
      * Найти множество всех элементов в диапазоне [fromElement, toElement)
      * Очень сложная
      */
+    // O(n) - траты времени, где n - количество элементов
+    // O(1) - траты памяти
     override fun subSet(fromElement: T, toElement: T): SortedSet<T> {
         val limit = find(toElement)
         return if (limit?.value == toElement)
@@ -285,6 +289,8 @@ class KtBinaryTree<T : Comparable<T>> : AbstractMutableSet<T>(), CheckableSorted
      * Найти множество всех элементов меньше заданного
      * Сложная
      */
+    // O(n) - траты времени, где n - количество элементов
+    // O(1) - траты памяти
     override fun headSet(toElement: T): SortedSet<T> {
         val limit = find(toElement)
         return if (limit?.value == toElement)
@@ -297,6 +303,8 @@ class KtBinaryTree<T : Comparable<T>> : AbstractMutableSet<T>(), CheckableSorted
      * Найти множество всех элементов больше или равных заданного
      * Сложная
      */
+    // O(n) - траты времени, где n - количество элементов
+    // O(1) - траты памяти
     override fun tailSet(fromElement: T): SortedSet<T> = this.filter { it >= fromElement}.toSortedSet()
 
     override fun first(): T {
