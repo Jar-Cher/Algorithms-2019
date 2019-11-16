@@ -192,7 +192,7 @@ class KtBinaryTree<T : Comparable<T>> : AbstractMutableSet<T>(), CheckableSorted
          */
 
         // O(1) - траты времени
-        // O(n) - траты памяти
+        // O(n) - траты памяти, где n - высота дерева
         override fun hasNext(): Boolean {
             if (root == null)
                 return false
@@ -207,10 +207,10 @@ class KtBinaryTree<T : Comparable<T>> : AbstractMutableSet<T>(), CheckableSorted
          * Средняя
          */
 
-        // O(1) - траты времени
+        // O(n) - траты времени, где n - высота дерева
         // O(1) - траты памяти
         override fun next(): T {
-            println("current node is: " + currentNode?.value)
+            /*println("current node is: " + currentNode?.value)
             println("left: " + currentNode?.left?.value)
             println("right: " + currentNode?.right?.value)
             for (i in visitedNodes) {
@@ -218,7 +218,7 @@ class KtBinaryTree<T : Comparable<T>> : AbstractMutableSet<T>(), CheckableSorted
                 print(" ")
             }
             println()
-            println()
+            println()*/
             if (wasDeleted) {
                 wasDeleted = false
                 currentNode?.let { visitedNodes.add(it) }
@@ -281,7 +281,11 @@ class KtBinaryTree<T : Comparable<T>> : AbstractMutableSet<T>(), CheckableSorted
      * Очень сложная
      */
     override fun subSet(fromElement: T, toElement: T): SortedSet<T> {
-        TODO()
+        val limit = find(toElement)
+        return if (limit?.value == toElement)
+            this.filter { (it < toElement) and (it >= fromElement) }.toSortedSet()
+        else
+            this.filter { (it <= toElement) and (it >= fromElement) }.toSortedSet()
     }
 
     /**
@@ -289,16 +293,18 @@ class KtBinaryTree<T : Comparable<T>> : AbstractMutableSet<T>(), CheckableSorted
      * Сложная
      */
     override fun headSet(toElement: T): SortedSet<T> {
-        TODO()
+        val limit = find(toElement)
+        return if (limit?.value == toElement)
+            this.filter { it < toElement }.toSortedSet()
+        else
+            this.filter { it <= toElement}.toSortedSet()
     }
 
     /**
      * Найти множество всех элементов больше или равных заданного
      * Сложная
      */
-    override fun tailSet(fromElement: T): SortedSet<T> {
-        TODO()
-    }
+    override fun tailSet(fromElement: T): SortedSet<T> = this.filter { it >= fromElement}.toSortedSet()
 
     override fun first(): T {
         var current: Node<T> = root ?: throw NoSuchElementException()

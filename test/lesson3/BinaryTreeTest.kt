@@ -143,11 +143,16 @@ class BinaryTreeTest {
 
     private fun testIteratorRemove(create: () -> CheckableSortedSet<Int>) {
         val random = Random()
-        for (iteration in 1..100) {
-            val list = mutableListOf<Int>()
-            for (i in 1..20) {
-                list.add(random.nextInt(100))
-            }
+        for (iteration in 1..1/*00*/) {
+            //val list = mutableListOf<Int>()
+            //for (i in 1..20) {
+            //    list.add(random.nextInt(100))
+            //}
+
+            //val list = mutableListOf(44, 77, 30, 71, 50, 56, 45, 39, 36, 3, 47, 57, 65, 43, 10, 52, 77, 57, 92, 57)
+
+            val list = mutableListOf(95, 37, 33, 6, 21, 58, 9, 83, 30, 68, 24, 63, 77, 18, 36, 72, 71, 37, 26, 87)
+
             val treeSet = TreeSet<Int>()
             val binarySet = create()
             for (element in list) {
@@ -156,11 +161,14 @@ class BinaryTreeTest {
             }
             val toRemove = list[random.nextInt(list.size)]
             treeSet.remove(toRemove)
+            println()
             println("Removing $toRemove from $list")
+            println("Tree: $binarySet")
             val iterator = binarySet.iterator()
             var counter = binarySet.size
             while (iterator.hasNext()) {
                 val element = iterator.next()
+                println("Next: $element")
                 counter--
                 print("$element ")
                 if (element == toRemove) {
