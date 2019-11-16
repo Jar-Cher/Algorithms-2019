@@ -171,13 +171,6 @@ class KtBinaryTree<T : Comparable<T>> : AbstractMutableSet<T>(), CheckableSorted
         }
     }
 
-    private fun maxNode(): Node<T>? {
-        var ans = root
-        while (ans?.right != null)
-            ans = ans.right
-        return ans
-    }
-
     inner class BinaryTreeIterator internal constructor() : MutableIterator<T> {
 
         private val visitedNodes = mutableSetOf<Node<T>>()
@@ -249,7 +242,7 @@ class KtBinaryTree<T : Comparable<T>> : AbstractMutableSet<T>(), CheckableSorted
                     }
                 }
                 else -> {
-                    if (node == maxNode())
+                    if (node == last())
                         return Pair(null, visited)
                     ans = node
                     while (ans in visited)
