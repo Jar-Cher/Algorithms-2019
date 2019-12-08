@@ -30,8 +30,41 @@ fun longestCommonSubSequence(first: String, second: String): String {
  * то вернуть ту, в которой числа расположены раньше (приоритет имеют первые числа).
  * В примере ответами являются 2, 8, 9, 12 или 2, 5, 9, 12 -- выбираем первую из них.
  */
+
+// O(n log n) - траты времени, где n - длина list
+// O(n^2) - траты памяти, где n - длина list
 fun longestIncreasingSubSequence(list: List<Int>): List<Int> {
-    TODO()
+    val currentLastNumbers: MutableList<Int> = mutableListOf(Int.MIN_VALUE)
+    for (i in 1..list.size)
+        currentLastNumbers.add(Int.MAX_VALUE)
+    val ans: MutableList<Int> = mutableListOf()
+    val lastNumbers: MutableList<MutableList<Int>> = mutableListOf()
+    var length = 0
+
+    for (i in list.indices) {
+        var j = currentLastNumbers.binarySearch(list[i])
+        if (j < 0)
+            j = -j - 1
+        currentLastNumbers[j] = list[i]
+        if (j > length) {
+            lastNumbers.add(mutableListOf(list[i]))
+            length = j
+        } else
+            lastNumbers[j - 1].add(list[i])
+    }
+
+    if (lastNumbers.isEmpty())
+        return emptyList()
+    var prev = Int.MAX_VALUE
+    for (i in length - 1 downTo 0) {
+        for (j in lastNumbers[i])
+            if (prev > j) {
+                ans.add(j)
+                prev = j
+                break
+            }
+    }
+    return ans.reversed().toList()
 }
 
 /**

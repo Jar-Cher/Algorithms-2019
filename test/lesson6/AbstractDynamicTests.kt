@@ -38,6 +38,8 @@ abstract class AbstractDynamicTests {
     }
 
     fun longestIncreasingSubSequence(longestIncreasingSubSequence: (List<Int>) -> List<Int>) {
+        assertEquals(listOf(1, 2, 5), longestIncreasingSubSequence(listOf(3, 1, 2, 5, 4, 0)))
+        assertEquals(listOf(-1), longestIncreasingSubSequence(listOf(-1, -1, -1, -1)))
         assertEquals(listOf(), longestIncreasingSubSequence(listOf()))
         assertEquals(listOf(1), longestIncreasingSubSequence(listOf(1)))
         assertEquals(listOf(1, 2), longestIncreasingSubSequence(listOf(1, 2)))
