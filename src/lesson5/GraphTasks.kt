@@ -2,6 +2,8 @@
 
 package lesson5
 
+import java.util.*
+
 /**
  * Эйлеров цикл.
  * Средняя
@@ -90,8 +92,55 @@ fun Graph.minimumSpanningTree(): Graph {
  *
  * Эта задача может быть зачтена за пятый и шестой урок одновременно
  */
+// O(n) - траты времени, где n - количество вершин в графе
+// O(n) - траты памяти, где n - количество вершин в графе
 fun Graph.largestIndependentVertexSet(): Set<Graph.Vertex> {
-    TODO()
+    if (vertices.isEmpty())
+        return emptySet()
+
+    val evens = mutableMapOf<Int, MutableSet<Graph.Vertex>>()
+    val odds = mutableMapOf<Int, MutableSet<Graph.Vertex>>()
+    val queue = ArrayDeque<Graph.Vertex>()
+    val prefs = mutableMapOf<Graph.Vertex, Graph.Vertex>()
+    val notVisited = mutableSetOf<Graph.Vertex>()
+    notVisited.addAll(vertices)
+    var connectedComponent = 0
+
+    while (notVisited.isNotEmpty()) {
+        queue.push(notVisited.first())
+        evens[connectedComponent] = mutableSetOf<Graph.Vertex>()
+        evens[connectedComponent]!!.add(notVisited.first())
+        odds[connectedComponent] = mutableSetOf<Graph.Vertex>()
+        while (queue.isNotEmpty()) {
+            val currentVertex = queue.pop()
+            notVisited.remove(currentVertex)
+            for (i in getNeighbors(currentVertex)) {
+                require(
+                    !((i in evens[connectedComponent]!!) ||
+                            (i in odds[connectedComponent]!!)) ||
+                            prefs[currentVertex] == i
+                ) { "" }
+                if (prefs[currentVertex] == i)
+                    continue
+                prefs[i] = currentVertex
+                if (currentVertex in evens[connectedComponent]!!)
+                    odds[connectedComponent]!!.add(i)
+                else
+                    evens[connectedComponent]!!.add(i)
+                queue.add(i)
+            }
+        }
+        connectedComponent++
+    }
+
+    val ans = mutableSetOf<Graph.Vertex>()
+    for (i in 0 until connectedComponent) {
+        if (evens[i]!!.size >= odds[i]!!.size)
+            ans.addAll(evens[i]!!)
+        else
+            ans.addAll(odds[i]!!)
+    }
+    return ans
 }
 
 /**

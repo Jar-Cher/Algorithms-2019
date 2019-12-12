@@ -1,6 +1,7 @@
 package lesson5
 
 import lesson5.impl.GraphBuilder
+import kotlin.test.assertFailsWith
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -177,31 +178,6 @@ abstract class AbstractGraphTests {
     }
 
     fun largestIndependentVertexSet(largestIndependentVertexSet: Graph.() -> Set<Graph.Vertex>) {
-        val emptyGraph = GraphBuilder().build()
-        assertTrue(emptyGraph.largestIndependentVertexSet().isEmpty())
-        val simpleGraph = GraphBuilder().apply {
-            val a = addVertex("A")
-            val b = addVertex("B")
-            addConnection(a, b)
-        }.build()
-        assertEquals(
-            setOf(simpleGraph["A"]),
-            simpleGraph.largestIndependentVertexSet()
-        )
-        val unconnected = GraphBuilder().apply {
-            val a = addVertex("A")
-            val b = addVertex("B")
-            val c = addVertex("C")
-            val d = addVertex("D")
-            val e = addVertex("E")
-            addConnection(a, b)
-            addConnection(c, d)
-            addConnection(d, e)
-        }.build()
-        assertEquals(
-            setOf(unconnected["A"], unconnected["C"], unconnected["E"]),
-            unconnected.largestIndependentVertexSet()
-        )
         val graph = GraphBuilder().apply {
             val a = addVertex("A")
             val b = addVertex("B")
@@ -227,6 +203,52 @@ abstract class AbstractGraphTests {
             setOf(graph["A"], graph["D"], graph["E"], graph["F"], graph["G"], graph["J"]),
             graph.largestIndependentVertexSet()
         )
+        val emptyGraph = GraphBuilder().build()
+        assertTrue(emptyGraph.largestIndependentVertexSet().isEmpty())
+        val simpleGraph = GraphBuilder().apply {
+            val a = addVertex("A")
+            val b = addVertex("B")
+            addConnection(a, b)
+        }.build()
+        assertEquals(
+            setOf(simpleGraph["A"]),
+            simpleGraph.largestIndependentVertexSet()
+        )
+        val metroGraph = GraphBuilder().apply {
+            val a = addVertex("A")
+            val b = addVertex("B")
+            val c = addVertex("C")
+            val d = addVertex("D")
+            addConnection(a, b)
+            addConnection(a, c)
+        }.build()
+        assertEquals(
+            setOf(metroGraph["B"], metroGraph["C"], metroGraph["D"]),
+            metroGraph.largestIndependentVertexSet()
+        )
+        val unconnected = GraphBuilder().apply {
+            val a = addVertex("A")
+            val b = addVertex("B")
+            val c = addVertex("C")
+            val d = addVertex("D")
+            val e = addVertex("E")
+            addConnection(a, b)
+            addConnection(c, d)
+            addConnection(d, e)
+        }.build()
+        assertEquals(
+            setOf(unconnected["A"], unconnected["C"], unconnected["E"]),
+            unconnected.largestIndependentVertexSet()
+        )
+        val failureGraph = GraphBuilder().apply {
+            val a = addVertex("A")
+            val b = addVertex("B")
+            val c = addVertex("C")
+            addConnection(a, b)
+            addConnection(c, b)
+            addConnection(a, c)
+        }.build()
+        assertFailsWith(IllegalArgumentException::class) { failureGraph.largestIndependentVertexSet() }
         val cross = GraphBuilder().apply {
             val a = addVertex("A")
             val b = addVertex("B")

@@ -37,20 +37,20 @@ fun longestIncreasingSubSequence(list: List<Int>): List<Int> {
     val currentLastNumbers: MutableList<Int> = mutableListOf(Int.MIN_VALUE)
     for (i in 1..list.size)
         currentLastNumbers.add(Int.MAX_VALUE)
-    val ans: MutableList<Int> = mutableListOf()
+    val ans = mutableListOf<Int>()
     val lastNumbers: MutableList<MutableList<Int>> = mutableListOf()
     var length = 0
 
-    for (i in list.indices) {
-        var j = currentLastNumbers.binarySearch(list[i])
+    for (i in list) {
+        var j = currentLastNumbers.binarySearch(i)
         if (j < 0)
             j = -j - 1
-        currentLastNumbers[j] = list[i]
+        currentLastNumbers[j] = i
         if (j > length) {
-            lastNumbers.add(mutableListOf(list[i]))
+            lastNumbers.add(mutableListOf(i))
             length = j
         } else
-            lastNumbers[j - 1].add(list[i])
+            lastNumbers[j - 1].add(i)
     }
 
     if (lastNumbers.isEmpty())
