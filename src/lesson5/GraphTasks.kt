@@ -2,6 +2,7 @@
 
 package lesson5
 
+import lesson5.impl.GraphBuilder
 import java.util.*
 
 /**
@@ -62,9 +63,40 @@ fun Graph.findEulerLoop(): List<Graph.Edge> {
  * |
  * J ------------ K
  */
-fun Graph.minimumSpanningTree(): Graph {
-    TODO()
-}
+fun Graph.minimumSpanningTree(): Graph = GraphBuilder().apply {
+    for (i in vertices)
+        addVertex(i.name)
+
+    val connectionsToAdd = mutableSetOf<Graph.Edge>()
+    for (i in edges) {
+        val queue = ArrayDeque<Graph.Vertex>()
+        val prefs = mutableMapOf<Graph.Vertex, Graph.Vertex>()
+        val visited = mutableSetOf<Graph.Vertex>()
+        queue.push(i.begin)
+        connectionsToAdd.add(i)
+        var shouldAdd = true
+        while (queue.isNotEmpty()) {
+            val currentVertex = queue.pop()
+            visited.add(currentVertex)
+            for (j in getNeighbors(currentVertex)
+                .intersect(
+                    connectionsToAdd.filter { (it.begin == currentVertex) || (it.end == currentVertex) }.fold(
+                        setOf<Graph.Vertex>()
+                    ) { previousResult, element -> previousResult + element.begin + element.end })) {
+                shouldAdd = (prefs[currentVertex] == j) || (j !in visited)
+                if (!shouldAdd)
+                    break
+                prefs[j] = currentVertex
+                if (j !in visited)
+                    queue.add(j)
+            }
+        }
+        if (!shouldAdd)
+            connectionsToAdd.remove(i)
+    }
+    for (i in connectionsToAdd)
+        addConnection(i.begin, i.end)
+}.build()
 
 /**
  * Максимальное независимое множество вершин в графе без циклов.
